@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Another Googel Fit</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="history">History</string>
+    <string name="recording">Recording</string>
+    <string name="session">Session</string>
+    <string name="sensor">Sensor</string>
+    <string name="ble">BLE</string>
+    <string name="setting">Settings</string>
+    <string name="openDrawer">Open Drawer</string>
+    <string name="closeDrawer">Close Drawer</string>
+</resources>
