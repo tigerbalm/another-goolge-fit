@@ -2,6 +2,7 @@ package com.moondog.anothergoogelfit;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,14 @@ public class MainActivity extends AppCompatActivity {
 
         setupToolbar();
         setupNaviDrawer();
+
+        setupInitialFragment();
+    }
+
+    private void setupInitialFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.frame, new HistoryFragment())
+                .commit();
     }
 
     private void setupNaviDrawer() {
@@ -39,26 +48,26 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.closeDrawers();
 
                 switch (menuItem.getItemId()) {
-                    case R.id.history :
+                    case R.id.history:
                         Toast.makeText(getApplicationContext(), "History menu", Toast.LENGTH_LONG).show();
                         break;
-                    case R.id.recording :
+                    case R.id.recording:
                         Toast.makeText(getApplicationContext(), "Recording menu", Toast.LENGTH_LONG)
                                 .show();
                         break;
-                    case R.id.session :
+                    case R.id.session:
                         Toast.makeText(getApplicationContext(), "Session menu", Toast.LENGTH_LONG)
                                 .show();
                         break;
-                    case R.id.sensor :
+                    case R.id.sensor:
                         Toast.makeText(getApplicationContext(), "Sensor menu", Toast.LENGTH_LONG)
                                 .show();
                         break;
-                    case R.id.config :
+                    case R.id.config:
                         Toast.makeText(getApplicationContext(), "Setting menu", Toast.LENGTH_LONG)
                                 .show();
                         break;
-                    default :
+                    default:
                         Toast.makeText(getApplicationContext(), "Error: no menu", Toast.LENGTH_LONG)
                                 .show();
                         break;
