@@ -22,7 +22,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.fitness.Fitness;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements GoogleConnection
+        .ConnectionCallbacks {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int REQUEST_OAUTH = 1;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean authInProgress = false;
     private GoogleApiClient mClient = null;
+    private GoogleConnection mConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +51,12 @@ public class MainActivity extends AppCompatActivity {
         setupToolbar();
         setupNaviDrawer();
 
-        mClient = ((AFGApplication)getApplication()).mGoogleApiClient;
+        //mClient = ((AFGApplication)getApplication()).mGoogleApiClient;
 
-        buildGoogleClient();
+        //buildGoogleClient();
+
+        mConnection = GoogleConnection.newInstance(this);
+        mClient = mConnection.getClient();
     }
 
     @Override
@@ -237,5 +242,15 @@ public class MainActivity extends AppCompatActivity {
     private void setupToolbar() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        setupInitialFragment();
+    }
+
+    @Override
+    public void onConnectionFailed(int var1) {
+
     }
 }

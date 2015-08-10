@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/another-goolge-fit.iml" filepath="$PROJECT_DIR$/another-goolge-fit.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AnotherGoogelFit.iml" filepath="$PROJECT_DIR$/AnotherGoogelFit.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

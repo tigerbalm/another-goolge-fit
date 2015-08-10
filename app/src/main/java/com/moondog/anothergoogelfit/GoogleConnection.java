@@ -1,9 +1,12 @@
 package com.moondog.anothergoogelfit;
 
 import android.app.Activity;
+import android.content.IntentSender;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
@@ -18,10 +21,14 @@ import java.lang.ref.WeakReference;
  */
 public class GoogleConnection implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    private static final String TAG = GoogleConnection.class.getSimpleName();
+    private static final int REQUEST_CODE = 9876;
     private static GoogleConnection mInstance;
     private WeakReference<Activity> mActivityWeakReference;
     private GoogleApiClient.Builder mGoogleApiClientBuilder;
     private GoogleApiClient mGoogleApiClient;
+    private boolean authInProgress;
+    private ConnectionCallbacks mCallbacks;
 
     public static GoogleConnection newInstance(Activity activity) {
         if (mInstance == null) {
@@ -41,20 +48,61 @@ public class GoogleConnection implements GoogleApiClient.ConnectionCallbacks, Go
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ));
 
         mGoogleApiClient = mGoogleApiClientBuilder.build();
+
+        mCallbacks = (ConnectionCallbacks) activity;
     }
 
     @Override
     public void onConnected(Bundle bundle) {
-
+        if (mCallbacks != null) {
+            mCallbacks.onConnected(bundle);
+        }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        // If your connection to the sensor gets lost at some point,
+        // you'll be able to determine the reason and react to it here.
+        if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST) {
+            Log.i(TAG, "Connection lost.  Cause: Network Lost.");
+        } else if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
+            Log.i(TAG, "Connection lost.  Reason: Service Disconnected");
+        }
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.i(TAG, "Connection failed. Cause: " + connectionResult.toString());
+        if (!connectionResult.hasResolution()) {
+            // Show the localized error dialog
+            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(),
+                    mActivityWeakReference.get(), 0).show();
+            return;
+        }
 
+        // The failure has a resolution. Resolve it.
+        // Called typically when the app is not yet authorized, and an
+        // authorization dialog is displayed to the user.
+        if (!authInProgress) {
+            try {
+                Log.i(TAG, "Attempting to resolve failed connection");
+                authInProgress = true;
+                connectionResult.startResolutionForResult(mActivityWeakReference.get(),
+                        REQUEST_CODE);
+            } catch (IntentSender.SendIntentException e) {
+                Log.e(TAG,
+                        "Exception while starting resolution activity", e);
+            }
+        }
+
+    }
+
+    public GoogleApiClient getClient() {
+        return mGoogleApiClient;
+    }
+
+    public interface ConnectionCallbacks {
+        void onConnected(Bundle bundle);
+        void onConnectionFailed(int var1);
     }
 }
