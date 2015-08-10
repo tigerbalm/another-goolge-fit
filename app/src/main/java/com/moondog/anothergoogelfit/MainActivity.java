@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements GoogleConnection
 
         // Connect to the Fitness API
         Log.i(TAG, "Connecting...");
-        mClient.connect();
+        mConnection.connect();
     }
 
     @Override
@@ -75,14 +75,20 @@ public class MainActivity extends AppCompatActivity implements GoogleConnection
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_OAUTH) {
-            authInProgress = false;
-            if (resultCode == RESULT_OK) {
-                // Make sure the app is not already connected or attempting to connect
-                if (!mClient.isConnecting() && !mClient.isConnected()) {
-                    mClient.connect();
-                }
-            }
+//        if (requestCode == REQUEST_OAUTH) {
+//            authInProgress = false;
+//            if (resultCode == RESULT_OK) {
+//                // Make sure the app is not already connected or attempting to connect
+//                if (!mClient.isConnecting() && !mClient.isConnected()) {
+//                    mClient.connect();
+//                }
+//            }
+//        }
+
+        Log.d(TAG, "onActivityResult requestCode : " + requestCode + ", resultCode: " + resultCode);
+
+        if (GoogleConnection.REQUEST_CODE == requestCode) {
+            mConnection.onActivityResult(resultCode);
         }
     }
 

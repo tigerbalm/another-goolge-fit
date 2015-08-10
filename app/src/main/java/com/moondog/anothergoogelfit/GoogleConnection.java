@@ -16,13 +16,14 @@ import java.lang.ref.WeakReference;
 
 /**
  * Created by sjun.lee on 2015-08-05.
- *
+ * <p/>
  * https://github.com/jpventura/google-play-services
  */
 public class GoogleConnection implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-
     private static final String TAG = GoogleConnection.class.getSimpleName();
-    private static final int REQUEST_CODE = 9876;
+
+    public static final int REQUEST_CODE = 9876;
+
     private static GoogleConnection mInstance;
     private WeakReference<Activity> mActivityWeakReference;
     private GoogleApiClient.Builder mGoogleApiClientBuilder;
@@ -52,6 +53,16 @@ public class GoogleConnection implements GoogleApiClient.ConnectionCallbacks, Go
         mCallbacks = (ConnectionCallbacks) activity;
     }
 
+    public void connect() {
+        Log.d(TAG, "connect");
+        if (mGoogleApiClient.isConnected() || mGoogleApiClient.isConnecting()) {
+            Log.d(TAG, "client is connecting. return");
+            return;
+        }
+
+        mGoogleApiClient.connect();
+    }
+
     @Override
     public void onConnected(Bundle bundle) {
         if (mCallbacks != null) {
@@ -73,12 +84,16 @@ public class GoogleConnection implements GoogleApiClient.ConnectionCallbacks, Go
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.i(TAG, "Connection failed. Cause: " + connectionResult.toString());
+
         if (!connectionResult.hasResolution()) {
+            Log.d(TAG, "onConnectionFailed has no resolution");
             // Show the localized error dialog
             GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(),
                     mActivityWeakReference.get(), 0).show();
             return;
         }
+
+        Log.d(TAG, "onConnectionFailed authInProgress: " + authInProgress);
 
         // The failure has a resolution. Resolve it.
         // Called typically when the app is not yet authorized, and an
@@ -103,6 +118,23 @@ public class GoogleConnection implements GoogleApiClient.ConnectionCallbacks, Go
 
     public interface ConnectionCallbacks {
         void onConnected(Bundle bundle);
+
         void onConnectionFailed(int var1);
+    }
+
+    public void onActivityResult(int result) {
+        Log.d(TAG, "onActivityResult result: " + result);
+
+        authInProgress = false;
+        if (result == Activity.RESULT_OK) {
+            // If the error resolution was successful we should continue
+            // processing errors.
+            connect();
+        } else {
+            // If the error resolution was not successful or the user canceled,
+            // we should stop processing errors.
+
+            Log.d(TAG, "onActivityResult Activity.Result_not_ok");
+        }
     }
 }
